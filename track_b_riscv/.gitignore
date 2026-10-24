@@ -1,0 +1,3 @@
+out/*/spike.log
+out/*/*.o
+out/*/tm.elf

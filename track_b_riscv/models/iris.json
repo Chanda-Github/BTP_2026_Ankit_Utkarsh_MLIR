@@ -1,0 +1,307 @@
+{
+  "benchmark_name": "iris",
+  "num_inputs": 8,
+  "num_literals": 16,
+  "num_clauses": 10,
+  "literal_names": [
+    "sl_low",
+    "not_sl_low",
+    "sl_high",
+    "not_sl_high",
+    "sw_low",
+    "not_sw_low",
+    "sw_high",
+    "not_sw_high",
+    "pl_low",
+    "not_pl_low",
+    "pl_high",
+    "not_pl_high",
+    "pw_low",
+    "not_pw_low",
+    "pw_high",
+    "not_pw_high"
+  ],
+  "clauses": [
+    {
+      "clause_id": 0,
+      "clause_name": "C1_pos",
+      "polarity": 1,
+      "include_mask": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "included_literals": [
+        "sl_low",
+        "sw_high"
+      ],
+      "formula": "sl_low & sw_high"
+    },
+    {
+      "clause_id": 1,
+      "clause_name": "C2_pos",
+      "polarity": 1,
+      "include_mask": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "included_literals": [
+        "pl_low",
+        "pw_low"
+      ],
+      "formula": "pl_low & pw_low"
+    },
+    {
+      "clause_id": 2,
+      "clause_name": "C1_pos",
+      "polarity": 1,
+      "include_mask": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "included_literals": [
+        "sl_high",
+        "pl_high"
+      ],
+      "formula": "sl_high & pl_high"
+    },
+    {
+      "clause_id": 3,
+      "clause_name": "C2_pos",
+      "polarity": 1,
+      "include_mask": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "included_literals": [
+        "sw_low",
+        "pw_high"
+      ],
+      "formula": "sw_low & pw_high"
+    },
+    {
+      "clause_id": 4,
+      "clause_name": "C1_pos",
+      "polarity": 1,
+      "include_mask": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "included_literals": [
+        "pl_high",
+        "pw_low"
+      ],
+      "formula": "pl_high & pw_low"
+    },
+    {
+      "clause_id": 5,
+      "clause_name": "C2_neg",
+      "polarity": -1,
+      "include_mask": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "included_literals": [
+        "not_sl_low",
+        "not_sw_high"
+      ],
+      "formula": "not_sl_low & not_sw_high"
+    },
+    {
+      "clause_id": 6,
+      "clause_name": "C1_neg",
+      "polarity": -1,
+      "include_mask": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "included_literals": [
+        "not_pl_low",
+        "not_pw_low"
+      ],
+      "formula": "not_pl_low & not_pw_low"
+    },
+    {
+      "clause_id": 7,
+      "clause_name": "C2_neg",
+      "polarity": -1,
+      "include_mask": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "included_literals": [
+        "not_sl_high",
+        "not_pl_high"
+      ],
+      "formula": "not_sl_high & not_pl_high"
+    },
+    {
+      "clause_id": 8,
+      "clause_name": "C1_neg",
+      "polarity": -1,
+      "include_mask": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "included_literals": [
+        "not_sw_low",
+        "not_pw_high"
+      ],
+      "formula": "not_sw_low & not_pw_high"
+    },
+    {
+      "clause_id": 9,
+      "clause_name": "C2_neg",
+      "polarity": -1,
+      "include_mask": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "included_literals": [
+        "not_pl_high",
+        "not_pw_low"
+      ],
+      "formula": "not_pl_high & not_pw_low"
+    }
+  ],
+  "truth_table": []
+}

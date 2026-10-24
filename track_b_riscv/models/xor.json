@@ -1,0 +1,176 @@
+{
+  "benchmark_name": "xor",
+  "num_inputs": 2,
+  "num_literals": 4,
+  "num_clauses": 4,
+  "literal_names": [
+    "x1",
+    "not_x1",
+    "x2",
+    "not_x2"
+  ],
+  "clauses": [
+    {
+      "clause_id": 0,
+      "clause_name": "C1_pos",
+      "polarity": 1,
+      "include_mask": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "included_literals": [
+        "x1",
+        "not_x2"
+      ],
+      "formula": "x1 & not_x2"
+    },
+    {
+      "clause_id": 1,
+      "clause_name": "C2_pos",
+      "polarity": 1,
+      "include_mask": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "included_literals": [
+        "not_x1",
+        "x2"
+      ],
+      "formula": "not_x1 & x2"
+    },
+    {
+      "clause_id": 2,
+      "clause_name": "C1_neg",
+      "polarity": -1,
+      "include_mask": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "included_literals": [
+        "x1",
+        "x2"
+      ],
+      "formula": "x1 & x2"
+    },
+    {
+      "clause_id": 3,
+      "clause_name": "C2_neg",
+      "polarity": -1,
+      "include_mask": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "included_literals": [
+        "not_x1",
+        "not_x2"
+      ],
+      "formula": "not_x1 & not_x2"
+    }
+  ],
+  "truth_table": [
+    {
+      "inputs": [
+        0,
+        0
+      ],
+      "literals": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "clause_outputs": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "pos_sum": 0,
+      "neg_sum": 1,
+      "vote_diff": -1,
+      "pred_class": 0,
+      "expected_class": 0,
+      "correct": true
+    },
+    {
+      "inputs": [
+        0,
+        1
+      ],
+      "literals": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "clause_outputs": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "pos_sum": 1,
+      "neg_sum": 0,
+      "vote_diff": 1,
+      "pred_class": 1,
+      "expected_class": 1,
+      "correct": true
+    },
+    {
+      "inputs": [
+        1,
+        0
+      ],
+      "literals": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "clause_outputs": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "pos_sum": 1,
+      "neg_sum": 0,
+      "vote_diff": 1,
+      "pred_class": 1,
+      "expected_class": 1,
+      "correct": true
+    },
+    {
+      "inputs": [
+        1,
+        1
+      ],
+      "literals": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "clause_outputs": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "pos_sum": 0,
+      "neg_sum": 1,
+      "vote_diff": -1,
+      "pred_class": 0,
+      "expected_class": 0,
+      "correct": true
+    }
+  ]
+}
