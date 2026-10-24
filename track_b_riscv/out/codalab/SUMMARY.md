@@ -2,6 +2,10 @@
 
 Every model: Spike `--isa=rv32i`, all test vectors match the golden model.
 
+**What is counted:** only the `tm_infer` function generated from each model by this MLIR pipeline (model compiled into straight-line code), read from `llvm-objdump -M no-aliases` of the real ELF, so pseudo-instructions already appear as the real RV32I instruction. The test harness is excluded. This is *not* the CoDALab generic `predict` program (loops over clause data in memory), which uses a different set: `add addi and andi beq blt jal jalr lbu lui lw or sb slli sltu sw xori` (17, after expanding `j`, `beqz`, `li`, `mv`, `nop`, `zext.b`, `snez`, `ret`).
+
+**Note on large models:** most `lw`/`sw`/`lui` here are register spills: the straight-line code keeps more values live than RV32I's 31 registers, and stack offsets beyond 2 KB need `lui`+`add` to form the address.
+
 | Model | Classes | Clauses/class | Features | Test acc % | Kernel insns used (/40) | Kernel size (insns) | Executed per inference |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | emg_50 | 8 | 50 | 160 | 80.26 | 14 | 14170 | 14159.0 |
