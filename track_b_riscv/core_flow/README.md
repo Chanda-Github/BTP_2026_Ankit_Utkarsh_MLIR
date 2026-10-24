@@ -64,6 +64,27 @@ end
 
 Also remove or comment out `$dumpvars(0, riscv_tcm_top_tb)`. Dumping the whole design, including the 2 MB data memory, makes simulation very slow.
 
+## Results so far (R1/R2 Verilog, Icarus Verilog)
+
+Same model, same input sample, same core. Cycles run from reset release to the final result
+store. For the paper's programs, the cycle shown is the last DMEM[0] store before the program
+restarts.
+
+| Model / program | Paper flow (gcc, hand-edited) | MLIR core flow | Ratio |
+|---|---:|---:|---:|
+| iris/4, T1, R1 | 20,714 | 3,916 | 5.3× |
+| iris/4, T2, R1 | 3,319 | 756 | 4.4× |
+| statlog/100, T2, R1 (test row 3) | 418,380 | 70,646 | 5.9× |
+
+R2 runs of the generated programs (all correct): iris/4 T1 3,928, T2 787; statlog/100 T2
+(row 0) 40,945 cycles. Most of the gap comes from compiler optimization: the paper's code was
+compiled without optimization, so variables live on the stack. The flow gets optimized code
+automatically, with no hand edits and with exact R2 rewrites.
+
+Program size: 90–100 instruction words for every model tested (iris, mammography, statlog,
+EMG, sports, HAR, gesture; up to 19 classes and 500 clauses per class). The paper's programs
+are about 200 words.
+
 ## Files
 
 | File | Role |
