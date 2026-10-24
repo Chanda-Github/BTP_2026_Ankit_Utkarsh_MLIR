@@ -7,3 +7,5 @@ out/codalab/*
 !out/codalab/SUMMARY.md
 !out/codalab/summary.json
 __pycache__/
+out/core/
+core_flow/__pycache__/
