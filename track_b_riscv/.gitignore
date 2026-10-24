@@ -1,3 +1,9 @@
 out/*/spike.log
 out/*/*.o
 out/*/tm.elf
+# CoDALab trained models and per-model outputs: lab data, regenerate with run_codalab.sh
+models/codalab/
+out/codalab/*
+!out/codalab/SUMMARY.md
+!out/codalab/summary.json
+__pycache__/

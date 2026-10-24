@@ -18,9 +18,15 @@ case "$MARCH" in
 esac
 ABI=ilp32; [ "$MARCH" = rv32e ] && ABI=ilp32e
 
-# 1. Verify + lower MLIR to the LLVM dialect
+# 1. Verify + lower MLIR to the LLVM dialect.
+#    index-bitwidth=32: RV32 has 32-bit addresses; 64-bit index maths would be emulated with
+#    extra sltu/add carry sequences and distort the instruction profile.
+#    use-bare-ptr-memref-call-conv: a static memref<Nxi8> argument becomes a plain C pointer.
 "$LLVM_BIN/mlir-opt" "$W/workload.mlir" \
-    --convert-arith-to-llvm --convert-func-to-llvm --reconcile-unrealized-casts \
+    --finalize-memref-to-llvm="index-bitwidth=32" \
+    --convert-arith-to-llvm="index-bitwidth=32" \
+    --convert-func-to-llvm="index-bitwidth=32 use-bare-ptr-memref-call-conv=1" \
+    --reconcile-unrealized-casts \
     -o "$W/workload.llvm.mlir"
 
 # 2. LLVM dialect -> LLVM IR
