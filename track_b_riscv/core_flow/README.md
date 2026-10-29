@@ -85,6 +85,28 @@ Program size: 90–100 instruction words for every model tested (iris, mammograp
 EMG, sports, HAR, gesture; up to 19 classes and 500 clauses per class). The paper's programs
 are about 200 words.
 
+## Checking against the paper's own memory files
+
+`compare_with_paper.py` runs the paper's `Tests/` memory files and the MLIR-generated ones on the
+same R1/R2 Verilog, for the same model and the same input sample, then reads votes[] and the
+predicted class back out of data memory:
+
+```bash
+python3 core_flow/compare_with_paper.py ~/path/to/BTP25_RISCVTsetlinMachine-main       # 6 cases, ~6 min
+python3 core_flow/compare_with_paper.py <root> iris/4/t1 statlog/100/t2 --cores r1    # chosen cases
+cat out/compare/REPORT.md
+```
+
+Result of the default set (both cores):
+- The predicted class is the same for the paper image, the MLIR image and the golden model in every case.
+- The MLIR images' votes equal the golden model's in every case.
+- The paper images' votes equal the golden model's for mammography. For iris, statlog and HAR
+  they differ by +2 in the classes where clause C/2 fires, exactly as the `bge x,y -> blt y,x`
+  rewrite predicts. The class still comes out right in these cases because the margin is
+  larger than 2.
+- Paper programs take the same cycles on R1 and R2 (identical code); the MLIR programs take
+  4.7-6.0x fewer cycles.
+
 ## Files
 
 | File | Role |
@@ -96,3 +118,4 @@ are about 200 words.
 | `crt0_core.S`, `link_core.ld` | Start-up and memory map of the TCM core |
 | `sim_rtl.sh` | Runs a pair of memory files on the R1/R2 Verilog (Icarus) |
 | `run_core_flow.sh` | All of the above in one command |
+| `compare_with_paper.py` | Same model/sample/core: paper `Tests/` images vs MLIR images vs golden, votes included |

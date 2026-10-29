@@ -9,3 +9,5 @@ out/codalab/*
 __pycache__/
 out/core/
 core_flow/__pycache__/
+out/compare/*
+!out/compare/REPORT.md
