@@ -107,6 +107,37 @@ Result of the default set (both cores):
 - Paper programs take the same cycles on R1 and R2 (identical code); the MLIR programs take
   4.7-6.0x fewer cycles.
 
+## Execution time vs #clauses (the paper's Fig. 5)
+
+`exec_time_sweep.py` measures cycles on the R1/R2 Verilog for every dataset × clauses × T1/T2 ×
+core, for both the MLIR images and the paper's own `Tests/` images. It uses the same model and
+the same input sample for both, and converts cycles to time with the paper's clock periods
+(R1 14 ns, R2 12 ns), the same way the Vivado testbench prints Execution Time.
+
+```bash
+python3 core_flow/exec_time_sweep.py ~/path/to/BTP25_RISCVTsetlinMachine-main          # ~30-40 min
+python3 core_flow/exec_time_sweep.py <root> --datasets statlog --clauses 50,100         # quick
+python3 core_flow/exec_time_sweep.py <root> --no-paper                                  # MLIR only
+```
+
+Outputs go to `out/exectime/`: `fig5_exec_time.png` / `.pdf`, `TABLE.md` and `results.csv`.
+
+Every run reads the class and all class votes back from data memory and checks them:
+- all 96 MLIR runs equal the golden model;
+- 40 paper runs equal the golden model, and the other 56 equal exactly the `bge`-swap semantics.
+
+Result for Statlog, Gesture, Gas and EMG, 50–300 clauses:
+- The paper images reproduce the paper's Fig. 5 values (T1 10²–10³ ms, T2 2–15 ms).
+- The MLIR images are 5.1–5.6× faster for T1 and 4.8–6.0× faster for T2.
+
+**Simulator.** `sim_rtl.sh` uses Verilator when installed: about 1.3M cycles/s, against about 4.5k
+cycles/s for Icarus. Each core is built once and cached. Cycle counts are identical to Icarus.
+
+Note: 198 of the paper's 200 memory files have no newline after the last word. Verilator's
+`$readmemh` then reads that word as 0, which breaks T1 images (their last word is a
+`clause_output` pointer). `sim_rtl.sh` adds the missing newline before each run. Vivado and
+Icarus read these files correctly.
+
 ## Files
 
 | File | Role |
@@ -118,4 +149,6 @@ Result of the default set (both cores):
 | `crt0_core.S`, `link_core.ld` | Start-up and memory map of the TCM core |
 | `sim_rtl.sh` | Runs a pair of memory files on the R1/R2 Verilog (Icarus) |
 | `run_core_flow.sh` | All of the above in one command |
+| `exec_time_sweep.py` | Fig. 5: execution time vs #clauses, MLIR vs paper images, all results checked |
+| `iss_harvard.py` | Tiny RV32I instruction-set simulator with separate IMEM/DMEM (separates program bugs from core bugs) |
 | `compare_with_paper.py` | Same model/sample/core: paper `Tests/` images vs MLIR images vs golden, votes included |

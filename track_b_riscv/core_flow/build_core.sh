@@ -15,6 +15,8 @@ D=${1:?usage: build_core.sh <dir>}
 HERE=$(cd "$(dirname "$0")" && pwd)
 LLVM=${LLVM_BIN:-/usr/lib/llvm-18/bin}
 SPIKE=${SPIKE:-/opt/spike/bin/spike}
+# SKIP_SPIKE=1: build the core images only (e.g. timing sweeps where the RTL run checks the result)
+PROGS="core spike"; [ "${SKIP_SPIKE:-0}" = 1 ] && PROGS="core"
 T=riscv32-unknown-elf
 CF="--target=$T -march=rv32i -mabi=ilp32 -mno-relax -nostdlib"
 CC_ONLY="-ffreestanding -fno-builtin"
@@ -28,7 +30,7 @@ CC_ONLY="-ffreestanding -fno-builtin"
 "$LLVM/mlir-translate" --mlir-to-llvmir "$D/kernel.llvm.mlir" -o "$D/kernel.ll"
 
 # 2. one optimised module per program (core image / Spike harness)
-for prog in core spike; do
+for prog in $PROGS; do
     entry=tm_entry; [ $prog = spike ] && entry=main
     "$LLVM/clang" $CF $CC_ONLY -O2 -S -emit-llvm "$D/entry_$prog.c" -o "$D/entry_$prog.ll"
     "$LLVM/llvm-link" "$D/kernel.ll" "$D/entry_$prog.ll" -o "$D/$prog.bc" 2>/dev/null
@@ -43,7 +45,7 @@ done
 ( cd "$D" && "$LLVM/clang" $CF -c data.S -o data.o )
 for core in r1 r2; do
     MATTR=""; [ $core = r2 ] && MATTR="+reserve-x31"
-    for prog in core spike; do
+    for prog in $PROGS; do
         "$LLVM/llc" -O2 -mtriple=$T -mattr="$MATTR" --riscv-no-aliases -disable-lsr "$D/$prog.opt.bc" -o "$D/${prog}_$core.raw.s"
         if [ $core = r2 ]; then
             python3 "$HERE/rewrite_r2.py" "$D/${prog}_$core.raw.s" "$D/${prog}_$core.s" $([ $prog = spike ] && echo --harness) > "$D/${prog}_r2.rewrite.log"
@@ -57,6 +59,7 @@ for core in r1 r2; do
     python3 "$HERE/make_mem.py" "$D/core_$core.elf" "$D/$core" $core "$LLVM"
     [ $core = r2 ] && sed "s/^/       /" "$D/core_r2.rewrite.log"
 
+    [ "${SKIP_SPIKE:-0}" = 1 ] && continue
     "$LLVM/ld.lld" -T "$HERE/../harness/link.ld" "$D/crt0_spike.o" "$D/spike_$core.o" "$D/data.o" \
         -o "$D/spike_$core.elf"
     if "$SPIKE" --isa=rv32i -m0x80000000:0x4000000 "$D/spike_$core.elf"; then

@@ -11,3 +11,8 @@ out/core/
 core_flow/__pycache__/
 out/compare/*
 !out/compare/REPORT.md
+out/exectime/*
+!out/exectime/fig5_exec_time.png
+!out/exectime/fig5_exec_time.pdf
+!out/exectime/TABLE.md
+!out/exectime/results.csv
