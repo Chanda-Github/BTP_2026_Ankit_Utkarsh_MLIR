@@ -39,30 +39,19 @@ Here, one command does all of it:
 
 ## Using the files in Vivado
 
-Copy `r1/memoryi.mem` + `r1/memoryd.mem` (or the `r2/` pair) to where `tcm_mem_ram.v` reads them, as before. The predicted class is at **DMEM address 0**, printed by the testbench as `Addr 0x00000000`.
+Copy `r1/memoryi.mem` + `r1/memoryd.mem` (or the `r2/` pair) to where `tcm_mem_ram.v` reads them,
+as before. The predicted class is at **DMEM address 0** (`Addr 0x00000000` in the report).
 
-**End of simulation.** With the current testbench, a run never reaches "PROGRAM EXECUTION COMPLETED". The check looks for the PC staying unchanged for 100 cycles, but this core never holds the PC still:
-- a self-jump keeps the prefetcher moving;
-- `ret`, `ecall`, `ebreak` and illegal instructions all trap back to address 0 and restart the program.
+**End of program.** The generated programs store the class to DMEM[0], then jump to an `ecall`
+at the very end of the program, behind 4 `nop`s so the core's 2–3-word prefetch can never reach
+it early. The lab testbench used for the ISVLSI'26 runs ends the simulation when it fetches an
+`ecall`, so **it works unchanged**: it prints PROGRAM EXECUTION COMPLETED / Total Clock Cycles /
+Total Instructions / Execution Time / INSTRUCTION PROFILE / INSTRUCTION MIX, measured the same way
+as the paper's programs. Set `CLK_PERIOD` to 14 (R1) or 12 (R2) and comment out `$dumpvars`.
 
-This happens for the paper's programs too: on Icarus they end at the timeout, and the printed cycle count is the timeout value. The generated programs store the result to DMEM[0] exactly once, as their last action. To stop there and get the real cycle count, add this block before `endmodule` in `riscv_tcm_top_tb.v`; `sim_rtl.sh` adds the same block:
-
-```verilog
-reg [31:0] result_store_cycle;
-initial result_store_cycle = 0;
-always @(posedge clk_i) begin
-    if (!rst_cpu_i && (|dut.u_tcm.u_ram.wr1_i) && dut.u_tcm.u_ram.addr1_i == 32'h0
-        && result_store_cycle == 0) begin
-        result_store_cycle <= cycle_count;
-        $display("Result Store Cycle: %0d  (DMEM[0] = %0d)", cycle_count, dut.u_tcm.u_ram.data1_i);
-        #(CLK_PERIOD * 5);
-        print_memory_contents();
-        $finish;
-    end
-end
-```
-
-Also remove or comment out `$dumpvars(0, riscv_tcm_top_tb)`. Dumping the whole design, including the 2 MB data memory, makes simulation very slow.
+The repo's older testbench (end detection by "PC stable for 100 cycles") never finishes with
+this core. `vivado/riscv_tcm_top_tb_R1.v` / `_R2.v` add a report block that stops at the result
+store and also prints a retired-instruction profile.
 
 ## Results so far (R1/R2 Verilog, Icarus Verilog)
 

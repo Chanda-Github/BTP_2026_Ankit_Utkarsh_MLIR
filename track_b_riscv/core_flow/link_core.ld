@@ -13,7 +13,7 @@ MEMORY
 }
 SECTIONS
 {
-  .text   : { *(.text.init) *(.text .text.*) } > IMEM
+  .text   : { *(.text.init) *(EXCLUDE_FILE(*crt0_core.o) .text .text.*) *(.text.zz_halt) } > IMEM
   .result : { *(.result) . = ALIGN(4); } > DMEM
   .rodata : { *(.rodata .rodata.* .srodata .srodata.*) } > DMEM
   .data   : { *(.data .data.* .sdata .sdata.*) } > DMEM
